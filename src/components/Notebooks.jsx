@@ -39,6 +39,7 @@ export default function Notebooks({ onVolver, onRegistrarN, onActualizarN }) {
             <td>{notebook.Precio}</td>
             <td>{notebook.Stock}</td>
             <td>{notebook.FechaAlta}</td>
+            <td>{notebook.ProcesadorNombre}</td>
             <td>{notebook.Activo ? 'Cuenta con unidades para entrega' : 'No podemos realizar entregas en este momento'}</td>
             <td>
                 <Button variant="link" className="text-danger me-2" onClick={()=>{onEliminarN(notebook.IdNotebook)}}> 
@@ -80,6 +81,7 @@ export default function Notebooks({ onVolver, onRegistrarN, onActualizarN }) {
                             <th>Precio</th>
                             <th>Stock</th>
                             <th>Fecha de ingreso</th>
+                            <th>Procesador</th>
                             <th>Disponible</th>
                             <th>Opciones</th>
                         </tr>

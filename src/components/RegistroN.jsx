@@ -1,16 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Form, Button, Card } from 'react-bootstrap';
 import notebooksService from '../services/notebooks.service';
+import procesadoresService from '../services/procesadores.service';
 
 export default function RegistroN({ onNotebooks, onVolver, item }) {
-    const { register, handleSubmit, reset } = useForm({values: item});
+    const { register, handleSubmit, reset, setValue } = useForm({values: item});
+    const [procesadores, setProcesadores] = useState([]);
+
+    useEffect(() => {
+        const fetchProcesadores = async () => {
+            const data = await procesadoresService.getByFilters()
+            setProcesadores(data);
+        };
+
+        fetchProcesadores();
+    }, []);
 
     const onSubmit = async(data) => {
         const result = await notebooksService.saveNotebook(data)
         if(result)
             onNotebooks();
     };
+
+    useEffect(() => {
+        if (item) {
+            reset(item);
+        }
+    }, [item, reset]);
 
     return (
         <Card className="mx-auto my-4 w-50">
@@ -50,6 +67,17 @@ export default function RegistroN({ onNotebooks, onVolver, item }) {
                             {...register('FechaAlta', { required: true })}
                         />
                     </Form.Group>
+                    <Form.Group className="mb-3" controlId="IdProcesador">
+                        <Form.Label>Procesador</Form.Label>
+                        <Form.Control as="select" {...register('IdProcesador', { required: true })}>
+                            <option value="">Seleccione un procesador</option>
+                            {procesadores.map(procesador => (
+                                <option key={procesador.IdProcesador} value={procesador.IdProcesador}>
+                                    {procesador.Nombre}
+                                </option>
+                            ))}
+                        </Form.Control>
+                    </Form.Group>
                     <Form.Group className="mb-3" controlId="Activo">
                         <Form.Check
                             type="checkbox"
@@ -58,7 +86,7 @@ export default function RegistroN({ onNotebooks, onVolver, item }) {
                         />
                     </Form.Group>
                     <Button variant="primary" type="submit">
-                        Registrar
+                        {item.IdNotebook !== undefined ? 'Actualizar' : 'Registrar'}
                     </Button>
                     <Button variant="secondary" onClick={() => reset()} className="ms-2">
                         Limpiar
